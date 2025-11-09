@@ -1,0 +1,61 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 0,
+            "y": 72
+          },
+          "nodeIndex": "Produtos",
+          "nodeLineageTag": "3fca3047-b178-488b-8ac7-c6ae9c8ca574",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 474,
+            "y": 113
+          },
+          "nodeIndex": "Vendas",
+          "nodeLineageTag": "c6adc6ec-81ba-4d4b-9bda-ec8900c2f750",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 633,
+            "y": 0
+          },
+          "nodeIndex": "Medidas",
+          "nodeLineageTag": "aae5768b-12ad-435f-844d-dfe78ea810ed",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Todas as tabelas",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas as tabelas",
+  "defaultDiagram": "Todas as tabelas"
+}

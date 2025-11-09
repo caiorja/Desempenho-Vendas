@@ -1,0 +1,113 @@
+table Vendas
+	lineageTag: c6adc6ec-81ba-4d4b-9bda-ec8900c2f750
+
+	column Data
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: edf715aa-2316-4e4d-aba3-92cfa7c3971a
+		summarizeBy: none
+		sourceColumn: Data
+
+		variation Variation
+			isDefault
+			relationship: 2a153bb3-4e35-4c35-9cff-ab9df0a63149
+			defaultHierarchy: LocalDateTable_fc227c41-52ab-4dae-8954-eaffdbdd69f9.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Nota Fiscal'
+		dataType: int64
+		formatString: 0
+		lineageTag: 0440db0e-c397-490c-b684-2f62b47af2de
+		summarizeBy: sum
+		sourceColumn: Nota Fiscal
+
+		annotation SummarizationSetBy = Automatic
+
+	column cdProduto
+		dataType: int64
+		formatString: 0
+		lineageTag: 2612b41b-cd14-424b-9a5e-318b36b73455
+		summarizeBy: none
+		sourceColumn: cdProduto
+
+		annotation SummarizationSetBy = Automatic
+
+	column cdVendedor
+		dataType: int64
+		formatString: 0
+		lineageTag: 4898707a-7957-4500-8214-2000da88f595
+		summarizeBy: sum
+		sourceColumn: cdVendedor
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vendedor
+		dataType: string
+		lineageTag: c814aaae-b9b9-4ea5-864b-b551eb031ca8
+		summarizeBy: none
+		sourceColumn: Vendedor
+
+		annotation SummarizationSetBy = Automatic
+
+	column Supervisor
+		dataType: string
+		lineageTag: 1c8f5767-c527-49f2-afca-dea652b2a8ac
+		summarizeBy: none
+		sourceColumn: Supervisor
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantidade
+		dataType: int64
+		formatString: 0
+		lineageTag: 89f5caef-38f2-4c36-8eaf-653239a7e53b
+		summarizeBy: sum
+		sourceColumn: Quantidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Valor Unitário'
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 2e88cc73-2fee-4c62-9f5f-f04f890ec22c
+		summarizeBy: sum
+		sourceColumn: Valor Unitário
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column Receita
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: b85eae64-6619-4707-945c-3e6eb6086ab9
+		summarizeBy: sum
+		sourceColumn: Receita
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	partition Vendas = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\Caio\Pictures\Gabriel - Power BI\BaseDados\BaseVendasCompleta.xlsx"), null, true),
+				    TabelaNov_Table = Fonte{[Item="TabelaNov",Kind="Table"]}[Data],
+				    #"Tipo Alterado" = Table.TransformColumnTypes(TabelaNov_Table,{{"Dia", Int64.Type}, {"Mês", type text}, {"Ano", Int64.Type}, {"Nota Fiscal", Int64.Type}, {"cdProduto", Int64.Type}, {"cdVendedor", Int64.Type}, {"Vendedor", type text}, {"Supervisor", type text}, {"Quantidade", Int64.Type}, {"Valor Unitário", type number}}),
+				    #"Colunas Mescladas" = Table.CombineColumns(Table.TransformColumnTypes(#"Tipo Alterado", {{"Ano", type text}, {"Dia", type text}}, "pt-BR"),{"Ano", "Mês", "Dia"},Combiner.CombineTextByDelimiter("/", QuoteStyle.None),"Data"),
+				    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Colunas Mescladas",{{"Data", type date}, {"Nota Fiscal", Int64.Type}, {"cdProduto", Int64.Type}, {"cdVendedor", Int64.Type}, {"Vendedor", type text}, {"Supervisor", type text}, {"Quantidade", Int64.Type}, {"Valor Unitário", type number}}),
+				    #"Multiplicação Inserida" = Table.AddColumn(#"Tipo Alterado1", "Multiplicação", each [Valor Unitário] * [Quantidade], type number),
+				    #"Colunas Renomeadas" = Table.RenameColumns(#"Multiplicação Inserida",{{"Multiplicação", "Receita"}}),
+				    #"Tipo Alterado2" = Table.TransformColumnTypes(#"Colunas Renomeadas",{{"Receita", Currency.Type}, {"Valor Unitário", Currency.Type}}),
+				    #"Linhas Classificadas" = Table.Sort(#"Tipo Alterado2",{{"Data", Order.Ascending}})
+				in
+				    #"Linhas Classificadas"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+
